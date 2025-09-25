@@ -22,17 +22,17 @@ function getRecsCB(userId, cb) {
 // TODO: use promisify
 function promisify(fn) {
     return function (...args) {
-      return new Promise((resolve, reject) => {
-        fn(...args, (err, data) => err ? reject(err) : resolve(data));
-      });
+        return new Promise((resolve, reject) => {
+            fn(...args, (err, data) => err ? reject(err) : resolve(data));
+        });
     };
 }
 
 
 // TODO: create wrappers using promisify
-const getUserP   = /* TODO */ null;
-const getOrdersP = /* TODO */ null;
-const getRecsP   = /* TODO */ null;
+const getUserP   = promisify(getUserCB);
+const getOrdersP = promisify(getOrdersCB);
+const getRecsP   = promisify(getRecsCB);
 
 /* ──────────────────────────────────────────────────────────────────────────
    - After fetching user and orders, INSERT a step that rejects with
@@ -42,15 +42,21 @@ const getRecsP   = /* TODO */ null;
 ────────────────────────────────────────────────────────────────────────── */
 function runSequential() {
     console.log("— SEQUENTIAL —");
+    let currentUser;
     return getUserP(1)
         .then(user => {
             console.log("user:", user);
-            return getOrdersP(user.id).then(orders => ({ user, orders }));
+            currentUser = user;
+            return getOrdersP(user.id);
         })
-        .then(({ user, orders }) => {
-            // TODO: business-rule failure here
-
-            throw new Error("TODO: add business-rule check & continue chain");
+        .then(orders => {
+            if (orders.length === 0) {
+                throw new Error("No orders");
+            }
+            console.log("orders:", orders);
+            return getRecsP(currentUser.id).then(recommendations => {
+                return { user: currentUser, orders, recommendations };
+            });
         })
         .then(({ user, orders, recommendations }) => {
             console.log("final (sequential):", { user, orders, recommendations });
@@ -74,8 +80,14 @@ function runParallel() {
     return getUserP(2)
         .then(user => {
             // TODO: run both in parallel using Promise.all and then log result
+            console.log("user:", user);
+            const ordersPromise = getOrdersP(user.id);
+            const recsPromise = getRecsP(user.id);
 
-            throw new Error("TODO: implement Promise.all fan-out");
+            return Promise.all([ordersPromise, recsPromise])
+                .then(([orders, recommendations]) => {
+                    return { user, orders, recommendations };
+                });
         })
         .then(({ user, orders, recommendations }) => {
             console.log("final (parallel):", { user, orders, recommendations });
@@ -95,10 +107,14 @@ Optional -- Promise.race demo
 ────────────────────────────────────────────────────────────────────────── */
 function runRaceOptional() {
     console.log("— RACE (optional) —");
-    const p1 = new Promise(res => setTimeout(() => res("p1"), 120));
-    const p2 = new Promise(res => setTimeout(() => res("p2"), 60));
+    const p1 = new Promise(res => setTimeout(() => res("p1 wins (slower)"), 120));
+    const p2 = new Promise(res => setTimeout(() => res("p2 wins (faster)"), 60));
     // TODO:practice  Promise.race return then (winner as console.log("race winner:", winner));
-    console.log("TODO: implement Promise.race");
+
+    Promise.race([p1, p2])
+        .then(winner => {
+            console.log("Race winner:", winner);
+        });
 }
 
 /* ──────────────────────────────────────────────────────────────────────────
