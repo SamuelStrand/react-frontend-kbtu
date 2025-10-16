@@ -7,6 +7,8 @@ export default function GamesList() {
     const [status, setStatus] = useState('idle');
     const [error, setError] = useState(null);
 
+    const [query, setQuery] = useState('');
+
     const loadGames = async () => {
         setStatus('loading');
         setError(null);
@@ -14,13 +16,18 @@ export default function GamesList() {
             const res = await fetch('/ftg/games?platform=pc');
             if (!res.ok) throw new Error(`HTTP ${res.status}`);
             const data = await res.json();
-            setGames(Array.isArray(data) ? data.slice(0, 12) : []);
+            setGames(Array.isArray(data) ? data.slice(0, 999) : []);
             setStatus('done');
         } catch (e) {
             setError(e.message || 'Unknown error');
             setStatus('error');
         }
     };
+
+    const norm = s => s.toLowerCase();
+    const filtered = games.filter(g =>
+        norm(g.title).includes(norm(query.trim()))
+    );
 
     return (
         <section className="gamesList">
@@ -35,12 +42,30 @@ export default function GamesList() {
                 </button>
             </header>
 
+            <div className="gamesList__search">
+                <input
+                    type="text"
+                    value={query}
+                    onChange={e => setQuery(e.target.value)}
+                    placeholder="Search by title…"
+                    className="gamesList__input"
+                />
+                <button
+                    className="gamesList__clearBtn"
+                    onClick={() => setQuery('')}
+                    disabled={!query}
+                    aria-label="Clear search"
+                >
+                    Clear
+                </button>
+            </div>
+
             {status === 'error' && (
                 <p className="gamesList__error">Failed to load games: {error}</p>
             )}
 
             <ul className="gamesList__grid" aria-live="polite">
-                {games.map(game => (
+                {(query ? filtered : games).map(game => (
                     <GameCard key={game.id} game={game} />
                 ))}
             </ul>
