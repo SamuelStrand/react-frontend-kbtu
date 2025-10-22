@@ -1,0 +1,10 @@
+.gamesList__toolbar { display:flex; flex-direction:column; gap:12px; margin: 8px 0 16px; }
+.gamesList__filters { display:flex; gap:8px; align-items:center; }
+.gamesList__filters select, .gamesList__filters button {
+    padding:10px 12px; border:1px solid #ddd; border-radius:10px; background:#fff;
+}
+.gamesList__error { color:#b00020; margin:8px 0; }
+.gamesList__grid {
+    list-style:none; margin:0; padding:0; display:grid; gap:12px;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+}

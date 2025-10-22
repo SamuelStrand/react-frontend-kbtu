@@ -1,0 +1,6 @@
+.container { max-width: 1200px; margin: 0 auto; padding: 24px; }
+.navbar {
+    display:flex; gap: 16px; align-items:center; padding: 12px 24px; border-bottom: 1px solid #eee;
+}
+.navbar a { padding: 6px 10px; border-radius: 8px; }
+.navbar a.active { background: #111; color: #fff; }
