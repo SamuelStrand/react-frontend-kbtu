@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import GameCard from './GameCard';
 import '../styles/gamesList.css';
 
@@ -23,6 +23,10 @@ export default function GamesList() {
             setStatus('error');
         }
     };
+
+    useEffect(() => {
+        loadGames();
+    }, []);
 
     const norm = s => s.toLowerCase();
     const filtered = games.filter(g =>
