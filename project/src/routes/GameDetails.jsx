@@ -12,7 +12,6 @@ export default function GameDetails() {
         ;(async () => {
             setStatus('loading'); setError(null)
             try {
-                // Детали игры
                 const res = await fetch(`/ftg/game?id=${encodeURIComponent(id)}`)
                 if (!res.ok) throw new Error(`HTTP ${res.status}`)
                 const data = await res.json()
