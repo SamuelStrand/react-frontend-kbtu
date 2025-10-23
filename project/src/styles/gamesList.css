@@ -8,3 +8,13 @@
     list-style:none; margin:0; padding:0; display:grid; gap:12px;
     grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
 }
+
+.gamesList__pagination {
+    display:flex; gap:12px; align-items:center; justify-content:center;
+    margin: 16px 0 8px;
+}
+.gamesList__pageBtn {
+    padding:8px 12px; border:1px solid #ddd; border-radius:10px; background:#fff;
+}
+.gamesList__pageBtn:disabled { opacity:.6; cursor:not-allowed; }
+.gamesList__pageInfo { color:#555; font-size:14px; }
