@@ -16,7 +16,7 @@ export default function Home() {
             </div>
             <div className="home__media">
                 <img
-                    src="https://images.unsplash.com/photo-1606117339663-94d78c6b4bfb?auto=format&fit=crop&w=900&q=80"
+                    src="https://media.istockphoto.com/id/1399812399/photo/happy-asia-man-gamer-wear-headphone-competition-play-video-game-online-with-smartphone.jpg?s=2048x2048&w=is&k=20&c=XLopzi80vdlg_nA18_s0dhQcB2LQhj9H3khf0a-aP_8="
                     alt="Person holding a game controller"
                     className="home__image"
                 />

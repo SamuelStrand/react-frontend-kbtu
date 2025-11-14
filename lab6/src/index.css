@@ -1,0 +1,5 @@
+@import './styles/base.css';
+@import './styles/layout.css';
+@import './styles/itemsList.css';
+@import './styles/itemCard.css';
+@import './styles/details.css';
