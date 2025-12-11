@@ -13,6 +13,7 @@ export function subscribeToAuthChanges(callback) {
 
 export async function signupWithEmailPassword(email, password) {
   const cred = await createUserWithEmailAndPassword(auth, email, password)
+
   await setDoc(
     doc(db, 'profiles', cred.user.uid),
     {
@@ -20,8 +21,9 @@ export async function signupWithEmailPassword(email, password) {
       photoURL: cred.user.photoURL ?? null,
       createdAt: Date.now(),
     },
-    { merge: true }
+    { merge: true },
   )
+
   return cred.user
 }
 

@@ -8,3 +8,17 @@
 .gameCard__title { margin:0; font-size:18px; }
 .gameCard__desc { margin:0; color:#444; line-height:1.35; }
 .gameCard__meta { font-size: 12px; color:#666; display:flex; gap:8px; align-items:center; }
+
+.gameCard__footer {
+  margin-top: auto;
+}
+.favoriteBtn {
+  padding: 6px 10px;
+  border-radius: 999px;
+  border: 1px solid #ddd;
+  background: #fff;
+  font-size: 12px;
+}
+.favoriteBtn[aria-pressed='true'] {
+  background: #ffeb3b;
+}
