@@ -8,16 +8,15 @@ import './styles/layout.css'
 import store from './store/store'
 
 ReactDOM.createRoot(document.getElementById('root')).render(
-  <Provider store={store}>
-    <BrowserRouter>
-      <App />
-    </BrowserRouter>
-  </Provider>
+    <Provider store={store}>
+        <BrowserRouter>
+            <App />
+        </BrowserRouter>
+    </Provider>
 )
 
-// регистрация service worker для PWA
 if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => {
-    navigator.serviceWorker.register('/service-worker.js')
-  })
+    window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/service-worker.js')
+    })
 }
