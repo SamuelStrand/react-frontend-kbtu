@@ -1,0 +1,16 @@
+.row {
+    flex-wrap: wrap;
+}
+
+.search {
+    min-width: 240px;
+    flex: 1 1 240px;
+}
+
+.input,
+.select {
+    padding: 10px 12px;
+    border-radius: 10px;
+    border: 1px solid #e5e7eb;
+    background: white;
+}

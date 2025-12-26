@@ -1,0 +1,87 @@
+.title {
+    margin: 0;
+}
+
+.section {
+    margin-top: 12px;
+}
+
+.table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.table th,
+.table td {
+    text-align: left;
+    padding: 10px 8px;
+    border-bottom: 1px solid #e5e7eb;
+    vertical-align: top;
+}
+
+.col-id {
+    width: 90px;
+    opacity: 0.8;
+}
+
+.col-state {
+    width: 140px;
+}
+
+.col-severity {
+    width: 140px;
+}
+
+.col-updated {
+    width: 170px;
+}
+
+.col-actions {
+    width: 120px;
+}
+
+.itemTitle {
+    font-weight: 600;
+}
+
+.itemDesc {
+    opacity: 0.7;
+    font-size: 12px;
+    margin-top: 2px;
+}
+
+.muted {
+    opacity: 0.8;
+}
+
+.actions {
+    text-align: right;
+}
+
+.empty {
+    padding: 14px;
+    opacity: 0.7;
+}
+
+.linkBtn {
+    display: inline-block;
+    text-decoration: none;
+}
+
+/* Make Link look like our Button */
+.linkBtn.btn,
+.linkBtn {
+    padding: 6px 12px;
+    border-radius: 6px;
+    border: 1px solid #e5e7eb;
+    background: white;
+    color: #111827;
+}
+
+.linkBtn:hover {
+    background: #f3f4f6;
+}
+
+.pagination {
+    margin-top: 12px;
+}
