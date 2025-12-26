@@ -1,5 +1,5 @@
 import "./CasesPage.css";
-import { Link } from "react-router";
+import { Link, useLocation } from "react-router";
 
 import useCasesPage from "../hooks/useCasesPage.js";
 import Loader from "../../../../ui/Loader/Loader.jsx";
@@ -12,6 +12,7 @@ import Button from "../../../../ui/Button/Button";
 import ErrorBox from "../../../../ui/ErrorBox/ErrorBox";
 
 export default function CasesPage() {
+  const location = useLocation();
   const {
     items,
     status,
@@ -24,32 +25,32 @@ export default function CasesPage() {
   } = useCasesPage();
 
   return (
-    <Card>
-      {isLoading && <Loader text="Loading cases…" />}
+      <Card>
+        {isLoading && <Loader text="Loading cases…" />}
 
-      <Row justify="space-between" wrap>
-        <h1 className="h1 title">{headerText}</h1>
+        <Row justify="space-between" wrap>
+          <h1 className="h1 title">{headerText}</h1>
 
-        <Button onClick={refresh} disabled={isLoading}>
-          Refresh
-        </Button>
-      </Row>
+          <Button onClick={refresh} disabled={isLoading}>
+            Refresh
+          </Button>
+        </Row>
 
-      <div className="section">
-        <CasesFilters />
-      </div>
-
-      {status === "failed" && (
         <div className="section">
-          <ErrorBox status="error" title="Failed to load cases">
-            {String(error || "")}
-          </ErrorBox>
+          <CasesFilters />
         </div>
-      )}
 
-      <div className="section">
-        <table className="table">
-          <thead>
+        {status === "failed" && (
+            <div className="section">
+              <ErrorBox status="error" title="Failed to load cases">
+                {String(error || "")}
+              </ErrorBox>
+            </div>
+        )}
+
+        <div className="section">
+          <table className="table">
+            <thead>
             <tr>
               <th className="col-id">ID</th>
               <th>Title</th>
@@ -58,63 +59,66 @@ export default function CasesPage() {
               <th className="col-updated">Updated</th>
               <th className="col-actions" />
             </tr>
-          </thead>
+            </thead>
 
-          <tbody>
+            <tbody>
             {!isLoading && items.length === 0 && (
-              <tr>
-                <td colSpan={6} className="empty">
-                  No cases found.
-                </td>
-              </tr>
+                <tr>
+                  <td colSpan={6} className="empty">
+                    No cases found.
+                  </td>
+                </tr>
             )}
 
             {!isLoading &&
-              items.map((c) => (
-                <tr key={c.id}>
-                  <td>{c.id}</td>
+                items.map((c) => (
+                    <tr key={c.id}>
+                      <td>{c.id}</td>
 
-                  <td>
-                    <div className="itemTitle">{c.title}</div>
-                    <div className="itemDesc">
-                      {(c.description || "").slice(0, 90)}
-                      {(c.description || "").length > 90 ? "…" : ""}
-                    </div>
-                  </td>
+                      <td>
+                        <div className="itemTitle">{c.title}</div>
+                        <div className="itemDesc">
+                          {(c.description || "").slice(0, 90)}
+                          {(c.description || "").length > 90 ? "…" : ""}
+                        </div>
+                      </td>
 
-                  <td>
+                      <td>
                     <span className="badge">
                       {c.state === "in_progress" ? "in progress" : c.state}
                     </span>
-                  </td>
+                      </td>
 
-                  <td>
-                    <span className="badge">{c.severity}</span>
-                  </td>
+                      <td>
+                        <span className="badge">{c.severity}</span>
+                      </td>
 
-                  <td className="muted">
-                    {c.updatedAt ? new Date(c.updatedAt).toLocaleString() : "—"}
-                  </td>
+                      <td className="muted">
+                        {c.updatedAt ? new Date(c.updatedAt).toLocaleString() : "—"}
+                      </td>
 
-                  <td className="actions">
-                    <Link to={`/cases/${c.id}`} className="linkBtn">
-                      Details
-                    </Link>
-                  </td>
-                </tr>
-              ))}
-          </tbody>
-        </table>
+                      <td className="actions">
+                        <Link
+                            to={`/cases/${c.id}${location.search || ""}`}
+                            className="linkBtn"
+                        >
+                          Details
+                        </Link>
+                      </td>
+                    </tr>
+                ))}
+            </tbody>
+          </table>
 
-        <div className="pagination">
-          <Pagination
-            page={pagination.page}
-            totalPages={pagination.totalPages}
-            onPageChange={onPageChange}
-            disabled={isLoading}
-          />
+          <div className="pagination">
+            <Pagination
+                page={pagination.page}
+                totalPages={pagination.totalPages}
+                onPageChange={onPageChange}
+                disabled={isLoading}
+            />
+          </div>
         </div>
-      </div>
-    </Card>
+      </Card>
   );
 }

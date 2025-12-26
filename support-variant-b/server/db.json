@@ -4,7 +4,7 @@
       "id": "c1",
       "title": "Delivery tracking number missing",
       "description": "Happens for VIP customers. Started today.",
-      "state": "in_progress",
+      "state": "waiting_customer",
       "severity": "high",
       "customer": {
         "name": "Timur Brown",
@@ -33,13 +33,13 @@
         "type": "status_change"
       },
       "createdAt": "2025-12-02T13:08:22.000Z",
-      "updatedAt": "2025-12-25T18:48:03.734Z"
+      "updatedAt": "2025-12-26T06:02:09.547Z"
     },
     {
       "id": "c2",
       "title": "Payment not processed",
       "description": "Support notes: high volume complaint. Impact: critical.",
-      "state": "in_progress",
+      "state": "waiting_customer",
       "severity": "low",
       "customer": {
         "name": "David Rodriguez",
@@ -67,7 +67,7 @@
         "type": "status_change"
       },
       "createdAt": "2025-12-08T02:40:52.000Z",
-      "updatedAt": "2025-12-08T23:40:52.000Z"
+      "updatedAt": "2025-12-26T05:39:33.117Z"
     },
     {
       "id": "c3",
@@ -32366,6 +32366,42 @@
       "to": "in_progress",
       "note": "had to reinvestigate",
       "createdAt": "2025-12-25T18:48:03.734Z"
+    },
+    {
+      "id": "cl_1766726758152_2383227cfbd57",
+      "caseId": "c1",
+      "action": "status_changed",
+      "from": "in_progress",
+      "to": "waiting_customer",
+      "note": "аывавы",
+      "createdAt": "2025-12-26T05:25:58.139Z"
+    },
+    {
+      "id": "cl_1766726864505_c641bcfdb4162",
+      "caseId": "c1",
+      "action": "status_changed",
+      "from": "waiting_customer",
+      "to": "in_progress",
+      "note": "now in progress",
+      "createdAt": "2025-12-26T05:27:44.486Z"
+    },
+    {
+      "id": "cl_1766727573139_e1eb6e085304b",
+      "caseId": "c2",
+      "action": "status_changed",
+      "from": "in_progress",
+      "to": "waiting_customer",
+      "note": "123",
+      "createdAt": "2025-12-26T05:39:33.117Z"
+    },
+    {
+      "id": "cl_1766728929567_f334e3a93c456",
+      "caseId": "c1",
+      "action": "status_changed",
+      "from": "in_progress",
+      "to": "waiting_customer",
+      "note": null,
+      "createdAt": "2025-12-26T06:02:09.547Z"
     }
   ]
 }

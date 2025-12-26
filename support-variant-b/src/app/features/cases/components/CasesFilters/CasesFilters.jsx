@@ -14,42 +14,42 @@ export default function CasesFilters() {
   const filters = useSelector(selectCasesFilters);
 
   return (
-    <Card>
-      <Row gap={8}>
-        <select
-          className="select"
-          value={filters.state}
-          onChange={(e) => dispatch(setFilters({ state: e.target.value }))}
-          aria-label="Status"
-        >
-          <option value="all">All states</option>
-          <option value="open">Opened</option>
-          <option value="in_progres">In Progress</option>
-          <option value="waiting_customers">Waiting Customer</option>
-          <option value="resolveed">Resolved</option>
-        </select>
-        <select
-          className="select"
-          value={filters.severity}
-          onChange={(e) => dispatch(setFilters({ severity: e.target.value }))}
-          aria-label="Status"
-        >
-          <option value="all">All</option>
-          <option value="low">Low</option>
-          <option value="medium">Medium</option>
-          <option value="high">High</option>
-          <option value="critical">Critical</option>
-        </select>
-        <input
-          className="input search"
-          placeholder="Search…"
-          value={filters.q}
-          onChange={(e) => dispatch(setFilters({ q: e.target.value }))}
-          aria-label="Search"
-        />
+      <Card>
+        <Row gap={8}>
+          <select
+              className="select"
+              value={filters.state}
+              onChange={(e) => dispatch(setFilters({ state: e.target.value }))}
+              aria-label="Status"
+          >
+            <option value="all">All states</option>
+            <option value="open">Opened</option>
+            <option value="in_progress">In Progress</option>
+            <option value="waiting_customer">Waiting Customer</option>
+            <option value="resolved">Resolved</option>
+          </select>
+          <select
+              className="select"
+              value={filters.severity}
+              onChange={(e) => dispatch(setFilters({ severity: e.target.value }))}
+              aria-label="Severity"
+          >
+            <option value="all">All</option>
+            <option value="low">Low</option>
+            <option value="medium">Medium</option>
+            <option value="high">High</option>
+            <option value="critical">Critical</option>
+          </select>
+          <input
+              className="input search"
+              placeholder="Search…"
+              value={filters.q}
+              onChange={(e) => dispatch(setFilters({ q: e.target.value }))}
+              aria-label="Search"
+          />
 
-        <Button onClick={() => dispatch(resetFilters())}>Reset</Button>
-      </Row>
-    </Card>
+          <Button onClick={() => dispatch(resetFilters())}>Reset</Button>
+        </Row>
+      </Card>
   );
 }

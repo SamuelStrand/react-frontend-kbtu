@@ -2,6 +2,18 @@
     margin-top: 12px;
 }
 
+.detailsGrid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 12px;
+}
+
+@media (min-width: 900px) {
+    .detailsGrid {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+
 .pageTitle {
     font-weight: 800;
     font-size: 18px;
@@ -22,6 +34,97 @@
     padding: 12px;
 }
 
+.blockTitle {
+    font-weight: 700;
+    margin-bottom: 10px;
+}
+
+.kv {
+    display: grid;
+    grid-template-columns: 120px 1fr;
+    gap: 8px 12px;
+}
+
+.k {
+    opacity: 0.65;
+    font-size: 12px;
+}
+
+.v {
+    font-size: 13px;
+}
+
+.split {
+    height: 1px;
+    background: #e5e7eb;
+    margin: 12px 0;
+}
+
+.description {
+    white-space: pre-wrap;
+    line-height: 1.45;
+    opacity: 0.9;
+}
+
+.tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 10px;
+}
+
+.tag {
+    padding: 4px 8px;
+    border-radius: 999px;
+    border: 1px solid #e5e7eb;
+    background: white;
+    font-size: 12px;
+}
+
+.mutedText {
+    opacity: 0.7;
+    font-size: 13px;
+    margin-top: 8px;
+}
+
+.logList {
+    margin-top: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.logItem {
+    padding: 10px 12px;
+    border: 1px solid #e5e7eb;
+    border-radius: 10px;
+    background: white;
+}
+
+.logMeta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px 12px;
+    align-items: baseline;
+}
+
+.logAt {
+    opacity: 0.7;
+    font-size: 12px;
+}
+
+.logTitle {
+    font-weight: 600;
+    font-size: 13px;
+}
+
+.logNote {
+    margin-top: 6px;
+    opacity: 0.85;
+    font-size: 13px;
+    white-space: pre-wrap;
+}
+
 .textarea {
     width: 100%;
     resize: vertical;
@@ -39,6 +142,10 @@
     height: 100%;
     border-radius: 0;
     padding: 16px;
+}
+
+.drawerError {
+    margin-top: 12px;
 }
 
 .drawerTitle {

@@ -1,5 +1,10 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { fetchCases, fetchCaseById, patchCaseState } from "./casesService.js";
+import {
+  fetchCases,
+  fetchCaseById,
+  fetchCaseLog,
+  patchCaseState,
+} from "./casesService.js";
 
 const defaultFilters = {
   state: "all", // open | in_progress | resolved |waiting_customer| all
@@ -30,54 +35,71 @@ const initialState = {
 };
 
 export const loadCases = createAsyncThunk(
-  "cases/loadCases",
-  async (_, { getState, signal, rejectWithValue }) => {
-    try {
-      const s = getState().cases;
+    "cases/loadCases",
+    async (_, { getState, signal, rejectWithValue }) => {
+      try {
+        const s = getState().cases;
 
-      const params = {
-        page: String(s.page),
-        limit: String(s.limit),
-        state: s.filters.state,
-        severity: s.filters.severity,
-        q: s.filters.q,
-      };
+        const params = {
+          page: String(s.page),
+          limit: String(s.limit),
+          state: s.filters.state,
+          severity: s.filters.severity,
+          q: s.filters.q,
+        };
 
-      if (!params.q) delete params.q;
-      if (params.state === "all") delete params.state;
-      if (params.severity === "all") delete params.severity;
+        if (!params.q) delete params.q;
+        if (params.state === "all") delete params.state;
+        if (params.severity === "all") delete params.severity;
 
-      const data = await fetchCases(params, { signal }); // { items, page, totalPages, totalItems }
-      return data;
-    } catch (err) {
-      return rejectWithValue(err?.message || "Failed to load cases");
-    }
-  },
+        const data = await fetchCases(params, { signal }); // { items, page, totalPages, totalItems }
+        return data;
+      } catch (err) {
+        return rejectWithValue(err?.message || "Failed to load cases");
+      }
+    },
 );
 
 export const loadCaseById = createAsyncThunk(
-  "cases/loadCaseById",
-  async (caseId, { rejectWithValue }) => {
-    try {
-      const item = await fetchCaseById(caseId);
-      return item;
-    } catch (err) {
-      return rejectWithValue(err?.message || "Failed to load case");
-    }
-  },
+    "cases/loadCaseById",
+    async (caseId, { rejectWithValue }) => {
+      try {
+        const item = await fetchCaseById(caseId);
+        return item;
+      } catch (err) {
+        return rejectWithValue(err?.message || "Failed to load case");
+      }
+    },
+);
+
+export const loadCaseLogById = createAsyncThunk(
+    "cases/loadCaseLogById",
+    async (caseId, { signal, rejectWithValue }) => {
+      try {
+        const data = await fetchCaseLog(caseId, { signal });
+        return { caseId, items: Array.isArray(data?.items) ? data.items : [] };
+      } catch (err) {
+        return rejectWithValue(err?.message || "Failed to load case log");
+      }
+    },
 );
 
 export const updateCaseState = createAsyncThunk(
-  "cases/updateCaseState",
-  async ({ caseId, state, comment }, { rejectWithValue }) => {
-    try {
-      const updated = await patchCaseState(caseId, state, comment);
+    "cases/updateCaseState",
+    async ({ caseId, state, comment }, { rejectWithValue, dispatch, getState }) => {
+      try {
+        const updated = await patchCaseState(caseId, state, comment);
 
-      return { updated };
-    } catch (err) {
-      return rejectWithValue(err?.message || "Failed to update case");
-    }
-  },
+        dispatch(loadCaseLogById(caseId));
+
+        const s = getState().cases;
+        if (s.items.length > 0 || s.listStatus !== "idle") dispatch(loadCases());
+
+        return updated;
+      } catch (err) {
+        return rejectWithValue(err?.message || "Failed to update case");
+      }
+    },
 );
 
 const casesSlice = createSlice({
@@ -113,6 +135,7 @@ const casesSlice = createSlice({
       state.isChangeOpen = true;
 
       if (state.currentCase?.state) state.nextState = state.currentCase.state;
+      state.nextComment = "";
     },
     closeChangeStatus(state) {
       state.isChangeOpen = false;
@@ -131,43 +154,99 @@ const casesSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
-      .addCase(loadCases.pending, (state) => {
-        state.listStatus = "loading";
-        state.listError = null;
-      })
-      .addCase(loadCases.fulfilled, (state, action) => {
-        state.listStatus = "succeeded";
+        .addCase(loadCases.pending, (state) => {
+          state.listStatus = "loading";
+          state.listError = null;
+        })
+        .addCase(loadCases.fulfilled, (state, action) => {
+          state.listStatus = "succeeded";
 
-        const { items, page, totalPages, totalItems } = action.payload || {};
-        state.items = Array.isArray(items) ? items : [];
+          const { items, page, totalPages, totalItems } = action.payload || {};
+          state.items = Array.isArray(items) ? items : [];
 
-        state.totalItems = Number.isFinite(totalItems) ? totalItems : 0;
-        state.totalPages = Number.isFinite(totalPages) ? totalPages : 1;
-        state.page = Number.isFinite(page) ? page : state.page;
-      })
-      .addCase(loadCases.rejected, (state, action) => {
-        state.listStatus = "failed";
-        state.listError =
-          action.payload || action.error?.message || "Failed to load cases";
-      })
+          state.totalItems = Number.isFinite(totalItems) ? totalItems : 0;
+          state.totalPages = Number.isFinite(totalPages) ? totalPages : 1;
+          state.page = Number.isFinite(page) ? page : state.page;
 
-      .addCase(loadCaseById.pending, (state) => {
-        state.detailsStatus = "loading";
-        state.detailsError = null;
-      })
-      .addCase(loadCaseById.fulfilled, (state, action) => {
-        state.detailsStatus = "succeeded";
-        state.currentCase = action.payload || null;
+          if (state.page > state.totalPages) state.page = state.totalPages;
+        })
+        .addCase(loadCases.rejected, (state, action) => {
+          state.listStatus = "failed";
+          state.listError =
+              action.payload || action.error?.message || "Failed to load cases";
+        })
 
-        if (action.payload?.id) {
-          state.currentCaseId = action.payload.id;
-        }
-      })
-      .addCase(loadCaseById.rejected, (state, action) => {
-        state.detailsStatus = "failed";
-        state.detailsError =
-          action.payload || action.error?.message || "Failed to load case";
-      });
+        .addCase(loadCaseById.pending, (state) => {
+          state.detailsStatus = "loading";
+          state.detailsError = null;
+        })
+        .addCase(loadCaseById.fulfilled, (state, action) => {
+          state.detailsStatus = "succeeded";
+          state.currentCase = action.payload || null;
+
+          if (action.payload?.id) {
+            state.currentCaseId = action.payload.id;
+          }
+        })
+        .addCase(loadCaseById.rejected, (state, action) => {
+          state.detailsStatus = "failed";
+          state.detailsError =
+              action.payload || action.error?.message || "Failed to load case";
+        })
+
+        .addCase(loadCaseLogById.pending, (state, action) => {
+          const caseId = action.meta.arg;
+          state.logsByCaseId[caseId] = {
+            items: state.logsByCaseId[caseId]?.items || [],
+            status: "loading",
+            error: null,
+          };
+        })
+        .addCase(loadCaseLogById.fulfilled, (state, action) => {
+          const { caseId, items } = action.payload || {};
+          if (!caseId) return;
+          state.logsByCaseId[caseId] = {
+            items: Array.isArray(items) ? items : [],
+            status: "succeeded",
+            error: null,
+          };
+        })
+        .addCase(loadCaseLogById.rejected, (state, action) => {
+          const caseId = action.meta.arg;
+          state.logsByCaseId[caseId] = {
+            items: state.logsByCaseId[caseId]?.items || [],
+            status: "failed",
+            error:
+                action.payload ||
+                action.error?.message ||
+                "Failed to load case log",
+          };
+        })
+
+        .addCase(updateCaseState.pending, (state) => {
+          state.updateStatus = "loading";
+          state.updateError = null;
+        })
+        .addCase(updateCaseState.fulfilled, (state, action) => {
+          state.updateStatus = "succeeded";
+          state.updateError = null;
+
+          const updated = action.payload;
+          if (updated?.id) {
+            if (state.currentCaseId === updated.id) state.currentCase = updated;
+            const idx = state.items.findIndex((c) => c.id === updated.id);
+            if (idx !== -1) state.items[idx] = updated;
+          }
+
+          state.isChangeOpen = false;
+          state.nextState = updated?.state || state.nextState;
+          state.nextComment = "";
+        })
+        .addCase(updateCaseState.rejected, (state, action) => {
+          state.updateStatus = "failed";
+          state.updateError =
+              action.payload || action.error?.message || "Failed to update case";
+        });
   },
 });
 
@@ -207,6 +286,13 @@ export const selectCurrentCaseId = (state) => state.cases.currentCaseId;
 export const selectCurrentCase = (state) => state.cases.currentCase;
 export const selectCaseDetailsStatus = (state) => state.cases.detailsStatus;
 export const selectCaseDetailsError = (state) => state.cases.detailsError;
+
+export const selectCaseLogs = (state, caseId) =>
+    state.cases.logsByCaseId[caseId]?.items || [];
+export const selectCaseLogsStatus = (state, caseId) =>
+    state.cases.logsByCaseId[caseId]?.status || "idle";
+export const selectCaseLogsError = (state, caseId) =>
+    state.cases.logsByCaseId[caseId]?.error || null;
 
 export const selectUpdateStatus = (state) => state.cases.updateStatus;
 export const selectUpdateError = (state) => state.cases.updateError;
